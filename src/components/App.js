@@ -27,13 +27,20 @@ const App = () => {
   }, [apiKey, endpoints.content]);
 
   return (
-    <div>
+    <div className="container">
       <h1>The Guardian App</h1>
       <ul>
         {apiData.map(item => (
-          <a key={item.id} href={`${item.webUrl}`}>
-            <li>{item.webTitle}</li>
-          </a>
+          <li className="margin-bottom-s">
+            <a
+              key={item.id}
+              href={`${item.webUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {item.webTitle}
+            </a>
+          </li>
         ))}
       </ul>
     </div>
