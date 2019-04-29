@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 const App = () => {
   const [apiData, setApiData] = useState([]);
-  const apiKey = process.env.REACT_APP_API_KEY;
+  const [loading, setLoading] = useState(true);
+
+  const apiKey = `51fe8695-2bd2-4c51-a985-5b8867d7dac1`;
   const searchWord = "";
 
   const endpoints = {
@@ -15,34 +17,53 @@ const App = () => {
   };
 
   // The q parameter supports AND (,), OR (|) and NOT (-) operators
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       `https://content.guardianapis.com/${
+  //         endpoints.content
+  //       }?page=1&q=${searchWord}&api-key=${apiKey}`
+  //     )
+  //     .then(result => setApiData(result.data.response.results));
+  // }, [apiKey, endpoints.content]);
 
-  useEffect(() => {
+  const handleGetData = () => {
     axios
       .get(
         `https://content.guardianapis.com/${
           endpoints.content
         }?page=1&q=${searchWord}&api-key=${apiKey}`
       )
-      .then(result => setApiData(result.data.response.results));
-  }, [apiKey, endpoints.content]);
+      .then(result => {
+        setApiData(result.data.response.results);
+        setLoading(false);
+      })
+      .catch(error => console.log(error));
+  };
 
   return (
     <div className="container">
       <h1>The Guardian App</h1>
       <ul>
-        {apiData.map(item => (
-          <li className="margin-bottom-s">
-            <a
-              key={item.id}
-              href={`${item.webUrl}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {item.webTitle}
-            </a>
-          </li>
-        ))}
+        {loading ? (
+          <p>Press the "Get news" button to display all news</p>
+        ) : (
+          apiData.map(item => (
+            <li className="margin-bottom-s" key={item.id}>
+              <a
+                href={`${item.webUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {item.webTitle}
+              </a>
+            </li>
+          ))
+        )}
       </ul>
+      <button onClick={handleGetData} disabled={!loading ? true : false}>
+        Get news
+      </button>
     </div>
   );
 };
